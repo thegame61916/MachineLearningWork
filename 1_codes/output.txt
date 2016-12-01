@@ -1,0 +1,156 @@
+1.
+
+from sklearn.metrics import confusion_matrix
+Y_pred = model.predict_classes(X_test, batch_size=batch_size)
+Y_testClass = []
+for i in range(len(Y_test)):
+    maxP = -1
+    digit = 0
+    for j in range(len(Y_test[i])):
+            if(maxP<Y_test[i][j]):
+                maxP = Y_test[i][j]
+                digit = j
+    Y_testClass.append(digit)
+print
+print("Confusion matrix is:")
+print(confusion_matrix(Y_testClass, Y_pred, labels = [0,1,2,3,4,5,6,7,8,9]))
+
+
+2.
+
+batchsizes = [50, 64, 70, 75 , 80 , 128, 256, 512, 1024, 20148]
+test_loss = []
+accuracy = []
+for i in batchsizes:
+    batch_size = i
+    model = Sequential()
+    model.add(Dense(512, input_shape=(784,)))
+    model.add(Activation('relu'))
+    model.add(Dense(512))
+    model.add(Activation('relu'))
+    model.add(Dense(10))
+    model.add(Activation('softmax'))
+    model.compile(loss='categorical_crossentropy',
+          optimizer=RMSprop(),
+          metrics=['accuracy'])
+    history = model.fit(X_train, Y_train,
+                batch_size=batch_size, nb_epoch=nb_epoch,
+                verbose=1, validation_data=(X_test, Y_test))
+    score = model.evaluate(X_test, Y_test, verbose=0)
+    test_loss.append(score[0])
+    accuracy.append(score[1])
+
+plt.plot(accuracy)
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('batchsizes')
+plt.legend(['test'], loc='upper left')
+plt.show()
+plt.plot(test_loss)
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('batchsizes')
+plt.legend(['test'], loc='upper left')
+plt.show()
+
+test_loss = []
+accuracy = []
+batch_size = 512
+hidden_layers = [50, 64, 70, 75 , 80 , 128, 256, 512, 1024, 20148]
+for i in hidden_layers:
+    hidden_layer = i
+    model = Sequential()
+    model.add(Dense(hidden_layer, input_shape=(784,)))
+    model.add(Activation('relu'))
+    model.add(Dense(hidden_layer))
+    model.add(Activation('relu'))
+    model.add(Dense(10))
+    model.add(Activation('softmax'))
+    model.compile(loss='categorical_crossentropy',
+              optimizer=RMSprop(),
+          metrics=['accuracy'])
+    history = model.fit(X_train, Y_train,
+                batch_size=batch_size, nb_epoch=nb_epoch,
+                verbose=1, validation_data=(X_test, Y_test))
+    score = model.evaluate(X_test, Y_test, verbose=0)
+    test_loss.append(score[0])
+    accuracy.append(score[1])
+
+plt.plot(accuracy)
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('hidden layer size')
+plt.legend(['test'], loc='upper left')
+plt.show()
+plt.plot(test_loss)
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('hidden layer size')
+plt.legend(['test'], loc='upper left')
+plt.show()
+
+test_loss = []
+accuracy = []
+activations = ['relU','sigmoid','tanh']
+for i in activations:
+    model = Sequential()
+    model.add(Dense(512, input_shape=(784,)))
+    model.add(Activation(i))
+    model.add(Dense(512))
+    model.add(Activation(i))
+    model.add(Dense(10))
+    model.add(Activation(i))
+    model.compile(loss='categorical_crossentropy',
+              optimizer=RMSprop(),
+              metrics=['accuracy'])
+    history = model.fit(X_train, Y_train,
+                    batch_size=batch_size, nb_epoch=nb_epoch,
+                    verbose=1, validation_data=(X_test, Y_test))
+    score = model.evaluate(X_test, Y_test, verbose=0)
+    test_loss.append(score[0])
+    accuracy.append(score[1])
+plt.plot(accuracy)
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('activations')
+plt.legend(['test'], loc='upper left')
+plt.show()
+plt.plot(test_loss)
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('activations')
+plt.legend(['test'], loc='upper left')
+plt.show()
+
+3.
+
+X_train = [[0,0], [0,1], [1,0], [1,1]]
+Y_train = [[0], [1], [1], [0]]
+
+model = Sequential()
+model.add(Dense(2, input_dim=2))
+model.add(Activation('tanh'))
+model.add(Dense(1))
+model.add(Activation('sigmoid'))
+
+sgd = SGD(lr=0.1)
+model.compile(loss='binary_crossentropy',
+              optimizer=sgd,
+              metrics=['accuracy'])
+
+history = model.fit(X_train, Y_train,
+                    batch_size=1, nb_epoch=1000,
+                    verbose=1)
+x = np.random.random_sample((6000,))
+y = np.random.random_sample((6000,))
+t = []
+for i in range(len(x)):
+      t.append([x[i], y[i]])  
+
+z = model.predict_classes(t)
+for i in range(len(x)):
+    if(z[i][0] < 0.5):
+            plt.plot(x[i], y[i], 'ro')
+    else:
+            plt.plot(x[i], y[i], 'bo')
+plt.show()
